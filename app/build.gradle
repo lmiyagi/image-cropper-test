@@ -29,4 +29,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
     compile 'com.github.jkwiecien:EasyImage:2.0.2'
+    compile 'com.github.yalantis:ucrop:2.2.1'
 }

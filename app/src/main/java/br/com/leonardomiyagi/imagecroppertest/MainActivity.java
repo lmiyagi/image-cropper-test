@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.soundcloud.android.crop.Crop;
+import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     File file = new File(folder.getPath() + "/" + now.getTime() + ".jpg");
                     FileOutputStream outputStream = new FileOutputStream(file);
-                    combinedImages.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+                    combinedImages.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
                     outputStream.flush();
                     outputStream.close();
                     final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -90,11 +92,19 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onImagesPicked(@NonNull List<File> imageFiles, EasyImage.ImageSource source, int type) {
                 fileUri = Uri.fromFile(imageFiles.get(0));
-                Crop.of(fileUri, fileUri).asSquare().start(MainActivity.this);
+                UCrop.Options options = new UCrop.Options();
+                options.setToolbarColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimary));
+                options.setStatusBarColor(ContextCompat.getColor(MainActivity.this, R.color.colorPrimaryDark));
+                options.setActiveWidgetColor(ContextCompat.getColor(MainActivity.this, R.color.colorAccent));
+                UCrop.of(fileUri, fileUri)
+                        .withOptions(options)
+                        .withAspectRatio(1, 1)
+                        .withMaxResultSize(500, 500)
+                        .start(MainActivity.this);
             }
         });
-        if (requestCode == Crop.REQUEST_CROP && resultCode == RESULT_OK) {
-            imageView.setImageURI(fileUri);
+        if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            imageView.setImageURI(UCrop.getOutput(data));
         }
     }
 
